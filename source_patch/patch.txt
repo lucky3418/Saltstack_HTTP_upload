@@ -1,0 +1,19 @@
+http.query모듈에서 binary화일의 upload를 가능하게 하기 위하여 windows minion이 설치한 화일에서 다음과 같은 수정을 진행하였다.
+
+C:\\salt\bin\Lib\site-packages\salt\utils\http.py
+
+- old code
+if data_file is not None:
+	data = _render(
+	    data_file, data_render, data_renderer, template_dict, opts
+	)
+
+- new code
+if data_file is not None:
+    if salt.utils.files.is_binary(data_file):
+        with salt.utils.files.fopen(data_file, 'rb') as fh_:
+            data = fh_.read()
+    else:
+        data = _render(
+            data_file, data_render, data_renderer, template_dict, opts
+        )
